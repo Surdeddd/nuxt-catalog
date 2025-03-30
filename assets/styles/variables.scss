@@ -1,0 +1,15 @@
+@use 'sass:color';
+$accent: #f97316;
+$text: #1f1f1f;
+$danger: red;
+$background: #f9f9f9;
+$card: #ffffff;
+$accent-light: color.adjust($accent, $lightness: 15%);
+$accent-dark: color.adjust($accent, $lightness: -10%);
+$muted-text: #6b7280;
+$subtle-text: #9ca3af;
+$border: #e5e7eb;
+$radius: 12px;
+$radius-sm: 6px;
+$shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+$transition: 0.2s ease;
