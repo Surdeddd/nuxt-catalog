@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia';
-export const useFiltersRecipeStore = defineStore('filters', () => {
+export const useFiltersBooksStore = defineStore('filters', () => {
   const searchQuery = ref('');
   const viewMode = ref<ViewMode>('grid');
   const currentPage = ref(1);
   const pageSize = ref(20);
-
-  const selectedCuisine = ref('');
-  const selectedDiet = ref('');
+  const onlyFree = ref<boolean>(false);
+  const printType = ref<PrintType>('all');
 
   const setSearchQuery = (query: string) => {
     searchQuery.value = query;
@@ -21,13 +20,13 @@ export const useFiltersRecipeStore = defineStore('filters', () => {
     currentPage.value = page;
   };
 
-  const setCuisine = (cuisine: string) => {
-    selectedCuisine.value = cuisine;
+  const setOnlyFree = (value: boolean) => {
+    onlyFree.value = value;
     currentPage.value = 1;
   };
 
-  const setDiet = (diet: string) => {
-    selectedDiet.value = diet;
+  const setPrintType = (value: PrintType) => {
+    printType.value = value;
     currentPage.value = 1;
   };
 
@@ -37,8 +36,8 @@ export const useFiltersRecipeStore = defineStore('filters', () => {
 
   const resetFilters = () => {
     searchQuery.value = '';
-    selectedCuisine.value = '';
-    selectedDiet.value = '';
+    onlyFree.value = false;
+    printType.value = 'all';
     viewMode.value = 'grid';
     currentPage.value = 1;
   };
@@ -48,13 +47,13 @@ export const useFiltersRecipeStore = defineStore('filters', () => {
     viewMode,
     currentPage,
     pageSize,
-    selectedCuisine,
-    selectedDiet,
+    onlyFree,
+    printType,
+    setPrintType,
+    setOnlyFree,
     setSearchQuery,
     setViewMode,
     setCurrentPage,
-    setCuisine,
-    setDiet,
     resetFilters,
     setPageSize,
   };

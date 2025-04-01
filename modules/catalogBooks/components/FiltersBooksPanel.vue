@@ -2,39 +2,27 @@
   <div class="filters-panel">
     <UiSearch
       v-model="searchQuery"
-      placeholder="Поиск рецепта"
+      placeholder="Поиск книги"
       icon-name="mdi:magnify"
       class="filters-panel__search"
-      @debounced-input="$emit('update:search', searchQuery)"
     />
-
     <UiSelect
-      v-model="selectedCuisine"
-      :options="CONST_CUISINES"
-      label="Кухня"
-      placeholder="Выберите кухню"
+      v-model="selectedPrintType"
+      :options="CONST_PRINT_TYPES"
+      label="Тип издания"
       class="filters-panel__select"
-      @update:modelValue="$emit('update:cuisine', $event)"
     />
-
-    <UiSelect
-      v-model="selectedDiet"
-      :options="CONST_DIETS"
-      label="Диета"
-      placeholder="Выберите диету"
-      class="filters-panel__select"
-      @update:modelValue="$emit('update:diet', $event)"
-    />
-
+    <UiCheckbox v-model="selectedOnlyFree" class="filters-panel__checkbox">
+      Только бесплатные книги
+    </UiCheckbox>
     <div class="filters-panel__actions">
       <button class="reset-button" @click="resetFilters">
         <Icon name="mdi:close-circle-outline" />
         <span>Сбросить</span>
       </button>
-
       <div class="view-toggle">
         <button
-          @click="$emit('toggleView', 'grid')"
+          @click="filtersBooksStore.setViewMode('grid')"
           :class="[
             'toggle-button',
             { 'toggle-button--active': viewMode === 'grid' },
@@ -44,7 +32,7 @@
           <Icon name="mdi:view-grid" />
         </button>
         <button
-          @click="$emit('toggleView', 'list')"
+          @click="filtersBooksStore.setViewMode('list')"
           :class="[
             'toggle-button',
             { 'toggle-button--active': viewMode === 'list' },
@@ -59,46 +47,28 @@
 </template>
 
 <script setup lang="ts">
-  const props = defineProps<{
-    modelValue?: string;
-    cuisine?: string;
-    diet?: string;
-    viewMode: ViewMode;
-  }>();
+  const filtersBooksStore = useFiltersBooksStore();
 
-  const emit = defineEmits<{
-    (e: 'update:search', value: string): void;
-    (e: 'update:cuisine', value: string): void;
-    (e: 'update:diet', value: string): void;
-    (e: 'toggleView', mode: ViewMode): void;
-  }>();
+  const searchQuery = computed({
+    get: () => filtersBooksStore.searchQuery,
+    set: value => filtersBooksStore.setSearchQuery(value),
+  });
 
-  const searchQuery = ref(props.modelValue || '');
-  const selectedCuisine = ref(props.cuisine || '');
-  const selectedDiet = ref(props.diet || '');
+  const selectedPrintType = computed({
+    get: () => filtersBooksStore.printType,
+    set: value => filtersBooksStore.setPrintType(value),
+  });
+
+  const selectedOnlyFree = computed({
+    get: () => filtersBooksStore.onlyFree ?? false,
+    set: value => filtersBooksStore.setOnlyFree(value),
+  });
+
+  const viewMode = computed(() => filtersBooksStore.viewMode);
 
   const resetFilters = () => {
-    searchQuery.value = '';
-    selectedCuisine.value = '';
-    selectedDiet.value = '';
-
-    emit('update:search', '');
-    emit('update:cuisine', '');
-    emit('update:diet', '');
+    filtersBooksStore.resetFilters();
   };
-
-  watch(
-    () => props.modelValue,
-    val => (searchQuery.value = val || '')
-  );
-  watch(
-    () => props.cuisine,
-    val => (selectedCuisine.value = val || '')
-  );
-  watch(
-    () => props.diet,
-    val => (selectedDiet.value = val || '')
-  );
 </script>
 
 <style scoped lang="scss">
@@ -107,20 +77,42 @@
   .filters-panel {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 20px;
+    padding: 16px;
+    background-color: $background;
+    border-radius: $radius;
+    box-shadow: $shadow;
+    margin-bottom: 32px;
 
-    @media (min-width: 600px) {
+    @media (min-width: 768px) {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
       align-items: end;
+    }
+
+    &__search,
+    &__select,
+    &__checkbox {
+      width: 100%;
+    }
+
+    &__checkbox {
+      display: flex;
+      align-items: center;
+      height: 40px;
     }
 
     &__actions {
       display: flex;
-      justify-content: space-between;
+      justify-content: end;
       align-items: center;
-      gap: 16px;
+      grid-column: span 1;
+      gap: 12px;
+
+      @media (max-width: 1100px) {
+        justify-content: start;
+      }
 
       @media (max-width: 600px) {
         flex-direction: column-reverse;
@@ -130,11 +122,9 @@
   }
 
   .reset-button {
-    flex: 1;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
+    gap: 8px;
     padding: 10px 16px;
     font-size: 14px;
     font-weight: 500;
@@ -143,10 +133,10 @@
     border: 1px solid $danger;
     border-radius: $radius-sm;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 
     &:hover {
-      background-color: rgba($danger, 0.07);
+      background-color: rgba($danger, 0.08);
     }
 
     svg {
@@ -156,25 +146,24 @@
 
   .view-toggle {
     display: flex;
-    gap: 8px;
-    flex-shrink: 0;
+    gap: 10px;
   }
 
   .toggle-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: $accent;
-    color: white;
+    background-color: $accent-light;
+    color: $accent-dark;
     border: none;
-    padding: 10px 12px;
-    border-radius: $radius-sm;
+    padding: 10px;
+    border-radius: $radius;
     cursor: pointer;
-    font-size: 16px;
-    transition: 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 
     &--active {
-      background-color: $accent-dark;
+      background-color: $accent;
+      color: white;
     }
 
     &:hover {

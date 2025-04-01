@@ -1,5 +1,5 @@
 <template>
-  <RecipePage />
+  <BookPage />
 </template>
 
 <script lang="ts" setup></script>

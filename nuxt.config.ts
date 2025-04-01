@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   app: {
     head: {
-      title: 'FOOD',
+      title: 'Books',
     },
   },
   modules: ['@nuxt/icon'],
@@ -23,15 +23,14 @@ export default defineNuxtConfig({
   },
   components: [
     { path: '~/components' },
-    { path: '~/modules/catalogRecipe/components', pathPrefix: false },
-    { path: '~/modules/recipe/components', pathPrefix: false },
-    { path: '~/modules/catalogRecipe/page', pathPrefix: false },
-    { path: '~/modules/recipe/page', pathPrefix: false },
+    { path: '~/modules/catalogBooks/components', pathPrefix: false },
+    { path: '~/modules/books/components', pathPrefix: false },
+    { path: '~/modules/catalogBooks/page', pathPrefix: false },
+    { path: '~/modules/books/page', pathPrefix: false },
   ],
 
   runtimeConfig: {
     apiKey: process.env.NUXT_API_KEY,
-    rapidApiHost: process.env.NUXT_RAPIDAPI_HOST,
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
     },

@@ -4,7 +4,6 @@
 
     <div class="select__wrapper">
       <select :value="modelValue" class="select__native" @change="onChange">
-        <option value="">{{ placeholder }}</option>
         <option v-for="option in options" :key="option" :value="option">
           {{ option }}
         </option>
@@ -29,7 +28,6 @@
     modelValue: string;
     options: string[];
     label?: string;
-    placeholder?: string;
   }>();
 
   const emit = defineEmits<{
@@ -42,7 +40,7 @@
   };
 
   const clearSelection = () => {
-    emit('update:modelValue', '');
+    emit('update:modelValue', props.options[0]);
   };
 </script>
 

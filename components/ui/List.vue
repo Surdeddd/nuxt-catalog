@@ -9,14 +9,14 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
   defineProps<{
     loading: boolean;
-    items: { id: number; image: string; title: string }[];
+    items: T[];
   }>();
 
   const emit = defineEmits<{
-    (e: 'item-click', item: { id: number; image: string; title: string }): void;
+    (e: 'item-click', item: T): void;
   }>();
 </script>
 

@@ -20,10 +20,6 @@ export default defineEventHandler(async event => {
     method,
     params: query,
     data: method !== 'get' ? params : undefined,
-    headers: {
-      'X-RapidAPI-Key': config.apiKey,
-      'X-RapidAPI-Host': config.rapidApiHost,
-    },
   });
 
   return response.data;
